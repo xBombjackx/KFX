@@ -5,8 +5,7 @@
 "main": "widget.js",
 "scripts": {
 "test": "echo \"Error: no test specified\" && exit 1",
-"build": "webpack",
-"build:sedk": "npm run build && cpy widget.html build_for_sedk && cpy widget.css build_for_sedk && cpy widget.json build_for_sedk --rename=fields.json"
+"build": "webpack && cpy widget.html build_for_sedk && cpy widget.css build_for_sedk && cpy widget.json build_for_sedk --rename=fields.json"
 },
 "repository": {
 "type": "git",
