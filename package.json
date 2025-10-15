@@ -5,7 +5,8 @@
   "main": "widget.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "build:sedk": "npm run build && cpy widget.html build_for_sedk && cpy widget.css build_for_sedk && cpy widget.json build_for_sedk --rename=fields.json"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/xBombjackx/KFX#readme",
   "devDependencies": {
+    "cpy-cli": "^6.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
     "webpack": "^5.102.1",

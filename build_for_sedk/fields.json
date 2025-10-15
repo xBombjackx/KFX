@@ -1,0 +1,38 @@
+{
+  "streamerSummary": {
+    "type": "text",
+    "label": "Session Summary",
+    "value": "Working on my project! Come join me!"
+  },
+  "streamerTasks": {
+    "type": "text",
+    "label": "Streamer Tasks (one per line)",
+    "value": "Task 1\nTask 2\nTask 3"
+  },
+  "taskLimit": {
+      "type": "number",
+      "label": "Viewer Task Limit",
+      "value": 3
+  },
+  "textColor": {
+      "type": "colorpicker",
+      "label": "Text Color",
+      "value": "#ffffff"
+  },
+  "backgroundColor": {
+      "type": "colorpicker",
+      "label": "Background Color",
+      "value": "rgba(0, 0, 0, 0.5)"
+  },
+  "progressBarColor": {
+      "type": "colorpicker",
+      "label": "Progress Bar Color",
+      "value": "#4CAF50"
+  },
+  "completeTaskIndex": {
+    "type": "text",
+    "label": "Complete Task (by index, e.g., 1)",
+    "value": "",
+    "on_change": "completeStreamerTaskByIndex(this.value - 1)"
+  }
+}
