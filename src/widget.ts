@@ -1,5 +1,3 @@
-
-
 interface IStreamerTask {
   title: string;
   completed: boolean;
@@ -31,21 +29,21 @@ interface IState {
 let state: IState;
 
 // StreamElements widget lifecycle event
-window.addEventListener('onWidgetLoad', function (obj: any) {
-  const fieldData = obj.detail.fieldData;
-  init(fieldData);
+window.addEventListener('onWidgetLoad', function (e: Event) {
+  const obj = e as CustomEvent;
+  const { fieldData, data } = obj.detail;
+  // Load persisted viewer tasks from the store, or default to empty arrays
+  const initialViewerTasks = data.viewerTasks || { pending: [], approved: [] };
+  init(fieldData, initialViewerTasks);
 });
 
 // Initialize the widget state and render the initial view
-function init(fieldData: any): void {
+function init(fieldData: any, initialViewerTasks: IState['viewerTasks']): void {
   // Set up the initial state from StreamElements configuration
   state = {
     streamerSummary: fieldData.streamerSummary,
     streamerTasks: parseStreamerTasks(fieldData.streamerTasks),
-    viewerTasks: {
-      pending: [],
-      approved: []
-    },
+    viewerTasks: initialViewerTasks,
     progress: 0,
     config: {
       taskLimit: fieldData.taskLimit,
@@ -98,7 +96,8 @@ function applyStyles(): void {
 }
 
 // StreamElements event listener for chat commands
-window.addEventListener('onEventReceived', function (obj: any) {
+window.addEventListener('onEventReceived', function (e: Event) {
+  const obj = e as CustomEvent;
   if (obj.detail.listener === 'viewer-joined') {
     handleViewerPresence(obj.detail.event.username, 'join');
     return;
@@ -157,6 +156,7 @@ function updateViewerTaskStatus(user: string, status: string): void {
   }
 
   renderViewerTasks();
+  saveViewerTasks();
 }
 
 function approveViewerTask(viewerName: string): void {
@@ -177,6 +177,7 @@ function approveViewerTask(viewerName: string): void {
 
   sendChatMessage(`@${taskToApprove.user}, your task has been approved!`);
   renderViewerTasks();
+  saveViewerTasks();
 }
 
 function renderViewerTasks(): void {
@@ -209,6 +210,7 @@ function rejectViewerTask(viewerName: string): void {
 
   const [rejectedTask] = state.viewerTasks.pending.splice(pendingIndex, 1);
   sendChatMessage(`@${rejectedTask.user}, your task has been rejected.`);
+  saveViewerTasks();
 }
 
 function addViewerTask(user: string, taskTitle: string): void {
@@ -221,7 +223,7 @@ function addViewerTask(user: string, taskTitle: string): void {
     return;
   }
   const existingApprovedTask = state.viewerTasks.approved.find(t => t.user === user);
-  if(existingApprovedTask) {
+  if (existingApprovedTask) {
     sendChatMessage(`@${user}, you already have an active task.`);
     return;
   }
@@ -234,6 +236,7 @@ function addViewerTask(user: string, taskTitle: string): void {
   });
 
   sendChatMessage(`@${user}, your task "${taskTitle}" has been received and is pending approval!`);
+  saveViewerTasks();
   // In a real environment, you'd also need a way for mods to see the pending queue.
   // For now, we'll just add it to the state.
 }
@@ -241,6 +244,11 @@ function addViewerTask(user: string, taskTitle: string): void {
 function sendChatMessage(message: string): void {
   // SE.api.get('chatbot.say', { message: message });
   console.log(`CHATBOT: ${message}`); // Keep for local testing
+}
+
+function saveViewerTasks(): void {
+  // SE.store.set('viewerTasks', state.viewerTasks);
+  console.log('SAVING STATE:', state.viewerTasks);
 }
 
 function completeStreamerTaskByTitle(taskTitle: string): void {
@@ -300,6 +308,7 @@ function resetDay(): void {
   renderStreamerTasks();
   renderViewerTasks();
   renderProgressBar();
+  saveViewerTasks();
   sendChatMessage('A new day has begun! All tasks have been reset.');
 }
 
