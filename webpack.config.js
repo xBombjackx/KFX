@@ -16,7 +16,7 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'widget.bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'widget.js', // Changed from widget.bundle.js
+    path: path.resolve(__dirname, 'build_for_sedk'), // Changed output directory
   },
 };
